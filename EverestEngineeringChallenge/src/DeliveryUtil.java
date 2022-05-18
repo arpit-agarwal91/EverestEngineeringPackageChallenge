@@ -85,6 +85,11 @@ public class DeliveryUtil {
 					&& base.getWeight()<first.getWeight() && first.getWeight()<maxWeight) {
 				m=i;
 			}
+			if(first.getDeliveryTime()==0 && base.getDeliveryTime()==0 
+					&& base.getWeight()==first.getWeight() 
+					&& first.getWeight()<maxWeight && base.getDistance()<first.getDistance()) {
+				m=i;
+			}
 		}
 		return m;
 	}
