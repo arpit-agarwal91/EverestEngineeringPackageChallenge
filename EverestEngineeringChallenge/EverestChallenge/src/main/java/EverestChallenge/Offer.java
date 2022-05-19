@@ -1,3 +1,4 @@
+package EverestChallenge;
 public enum Offer {
 	
 	OFR001(10, "0-200","70-200"),

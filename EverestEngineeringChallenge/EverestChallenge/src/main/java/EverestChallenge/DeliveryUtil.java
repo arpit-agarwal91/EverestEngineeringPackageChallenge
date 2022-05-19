@@ -1,3 +1,4 @@
+package EverestChallenge;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,23 +14,14 @@ public class DeliveryUtil {
 		int p=0;
 		while(arr[0]!=-1 && arr[1]!=-1) {
 			if(p<noOfVehicles) {
-				packages.get(arr[0]).setDeliveryTime(packages.get(arr[0]).getDistance()/(float)maxSpeed);
-				packages.get(arr[1]).setDeliveryTime(packages.get(arr[1]).getDistance()/(float)maxSpeed);
+				setDeliveryTimeInProcessedPackages(0, arr, maxSpeed, packages);
 				vehicles.get(p).setFreeAfterHours(2*Math.max(packages.get(arr[0]).getDeliveryTime(), packages.get(arr[1]).getDeliveryTime()));
 				p++;
 			}
 			else {
-				float minArrival = Float.MAX_VALUE;
-				int index=-1;
-				for(int i=0;i<vehicles.size();i++) {
-					if(vehicles.get(i).getFreeAfterHours()<minArrival) {
-						minArrival = vehicles.get(i).getFreeAfterHours();
-						index = i;
-					}				
-				}
-				packages.get(arr[0]).setDeliveryTime(minArrival+packages.get(arr[0]).getDistance()/(float)maxSpeed);
-				packages.get(arr[1]).setDeliveryTime(minArrival+packages.get(arr[1]).getDistance()/(float)maxSpeed);
-				vehicles.get(index).setFreeAfterHours(minArrival+2*Math.max(packages.get(arr[0]).getDeliveryTime(), packages.get(arr[1]).getDeliveryTime()));
+				int index = findVehicleIndexWithMinimalArrivalTime(vehicles);
+				setDeliveryTimeInProcessedPackages(vehicles.get(index).getFreeAfterHours(), arr, maxSpeed, packages);
+				vehicles.get(index).setFreeAfterHours(vehicles.get(index).getFreeAfterHours()+2*Math.max(packages.get(arr[0]).getDeliveryTime(), packages.get(arr[1]).getDeliveryTime()));
 			}
 			arr = getMax2(packages, maxWeight);
 		}
@@ -38,21 +30,14 @@ public class DeliveryUtil {
 		
 		while(packages.get(max).getDeliveryTime()==0) {
 			if(p<noOfVehicles) {
-				packages.get(max).setDeliveryTime(packages.get(max).getDistance()/(float)maxSpeed);
+				setDeliveryTimeInProcessedPackages(0, new int[] {max}, maxSpeed, packages);
 				vehicles.get(p).setFreeAfterHours(2*packages.get(max).getDeliveryTime());
 				p++;
 			}
 			else {
-				float minArrival = Float.MAX_VALUE;
-				int index=-1;
-				for(int i=0;i<vehicles.size();i++) {
-					if(vehicles.get(i).getFreeAfterHours()<minArrival) {
-						minArrival = vehicles.get(i).getFreeAfterHours();
-						index = i;
-					}				
-				}
-				packages.get(max).setDeliveryTime(minArrival+packages.get(max).getDistance()/(float)maxSpeed);
-				vehicles.get(index).setFreeAfterHours(minArrival+2*packages.get(max).getDeliveryTime());
+				int index = findVehicleIndexWithMinimalArrivalTime(vehicles);
+				setDeliveryTimeInProcessedPackages(vehicles.get(index).getFreeAfterHours(), new int[] {max}, maxSpeed, packages);
+				vehicles.get(index).setFreeAfterHours(vehicles.get(index).getFreeAfterHours()+2*packages.get(max).getDeliveryTime());
 			}
 			max = getMax(packages, maxWeight);
 		}
@@ -92,6 +77,25 @@ public class DeliveryUtil {
 			}
 		}
 		return m;
+	}
+	
+	public static void setDeliveryTimeInProcessedPackages(float minArrivalTime, int packageIndexes[], int maxSpeed,
+			List<Package> packages) {
+		for(int i=0;i<packageIndexes.length;i++){
+			packages.get(packageIndexes[i]).setDeliveryTime(minArrivalTime+packages.get(packageIndexes[0]).getDistance()/(float)maxSpeed);
+		}
+	}
+	
+	public static int findVehicleIndexWithMinimalArrivalTime(List<Vehicle> vehicles) {
+		float minArrival = Float.MAX_VALUE;
+		int index=-1;
+		for(int i=0;i<vehicles.size();i++) {
+			if(vehicles.get(i).getFreeAfterHours()<minArrival) {
+				minArrival = vehicles.get(i).getFreeAfterHours();
+				index = i;
+			}				
+		}
+		return index;
 	}
 
 }
