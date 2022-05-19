@@ -19,7 +19,11 @@ PKG5 155 95 NA
 The output will seem like below:
 
 PKG1 0 750 4.0
+
 PKG2 0 1475 1.79
+
 PKG4 105 1395 1.79
+
 PKG5 0 2125 4.21
+
 PKG3 0 2350 1.43
